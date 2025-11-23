@@ -1,0 +1,29 @@
+lt is this elemtn <img src="https://sunflower-land.com/game-assets/npcs/synced.gif" class="absolute w-16" style="transform: perspective(9cm) skew(-3deg, -3deg) rotateX(9deg) rotateY(13deg) scale(0.859501); top: 6%; left: 12%;">
+ 
+ , p1 = .99
+  , p2 = .99
+  , p3 = .99
+  , er = 0
+  , eg = 0
+  , eb = 0
+  , addNoise = (lt, kt=.4) => {
+    if (!lt || !lt.complete || lt.src.startsWith("data:image/png;base64") || !lt.naturalWidth || !lt.naturalHeight)
+        return;
+    const St = document.createElement("canvas")
+      , Dt = St == null ? void 0 : St.getContext("2d");
+    St.width = lt.naturalWidth,
+    St.height = lt.naturalHeight,
+    Dt.drawImage(lt, 0, 0);
+    const zt = Dt.getImageData(0, 0, lt.naturalWidth, lt.naturalHeight);
+    for (let Ht = 0, Wt = zt.data.length; Ht < Wt; Ht += 4) {
+        const Kt = .93 + Math.random() * kt
+          , Zt = .93 + Math.random() * kt
+          , na = .93 + Math.random() * kt;
+        zt.data[Ht] = zt.data[Ht] * p1 * Kt + er,
+        zt.data[Ht + 1] = zt.data[Ht + 1] * p2 * Zt + eg,
+        zt.data[Ht + 2] = zt.data[Ht + 2] * p3 * na + eb
+    }
+    Dt.putImageData(zt, 0, 0);
+    const Ut = St.toDataURL();
+    return lt.src = Ut,
+    Ut
