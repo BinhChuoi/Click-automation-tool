@@ -1,0 +1,15 @@
+keyboard_mappings:
+  main:
+    start: "ctrl+1"
+    stop: "ctrl+2"
+  edit:
+    save: "ctrl+s"
+    undo: "ctrl+z"
+
+ui_settings:
+  theme: "dark"
+  language: "en"
+
+tool_options:
+  auto_save: true
+  max_retries: 5

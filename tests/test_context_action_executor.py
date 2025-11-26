@@ -31,7 +31,7 @@ def test_extract_filename_complex():
     assert "default" not in names
 
 import pytest
-from common.utils.context_action_executor import ContextActionExecutor
+from common.utils.ContextActionExecutor import ContextActionExecutor
 
 def test_all_in_default_branch():
     scenario = {"condition": "all([k in detected_objects['default'] for k in ['base_template.png', 'hole.png']])"}

@@ -3,7 +3,7 @@ import sys
 import os
 import pyautogui
 pyautogui.FAILSAFE = False  # Disable PyAutoGUI fail-safe (use with caution)
-from common.impl.tool_manager import ToolManager
+from common.impl.tool.ToolManager import ToolManager
 
 def display_menu():
     """Prints the main menu and status."""
