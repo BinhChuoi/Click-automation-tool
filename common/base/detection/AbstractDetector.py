@@ -11,7 +11,7 @@ class AbstractDetector(ABC):
     about the application, screen, or threads.
     """
     @abstractmethod
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
         """
         Initializes the detector, e.g., by loading a model or templates.
         """

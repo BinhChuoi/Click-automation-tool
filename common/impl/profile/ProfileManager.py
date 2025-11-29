@@ -3,7 +3,7 @@ import json
 import time
 from common.utils.PathResolver import get_project_root
 
-class ProfileManager:
+class _ProfileManager:
     """Manages user profiles, which are collections of tool configurations."""
     def __init__(self, storage_path=os.path.join('storageData', 'profiles')):
         self.active_profile_name = None
@@ -73,3 +73,5 @@ class ProfileManager:
             self.active_profile_data['last_used'] = time.time()
             self.save_profile_data(self.active_profile_name, self.active_profile_data)
             print(f"Removed tool '{tool_id}' from profile '{self.active_profile_name}'.")
+
+ProfileManager = _ProfileManager()

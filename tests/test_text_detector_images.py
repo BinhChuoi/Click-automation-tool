@@ -23,11 +23,20 @@ IMAGE_TESTS = [
 
 @pytest.mark.parametrize("filename,expected_class", IMAGE_TESTS)
 def test_text_detector_on_image(filename, expected_class):
-    detector = TextDetector()
+    settings = {
+        'languages': ['en'],
+        'gpu': False,
+        'save_processed' : False,
+        'draw_boxes' : False,
+        'upscale_factor' : 5,
+        'nl_means' : True,    
+        'nl_h' : 15
+    }
+    detector = TextDetector(settings)
     image_path = os.path.join(os.path.dirname(__file__), "images", filename)
     image = cv2.imread(image_path)
     assert image is not None, f"Failed to load {filename}"
-    results = detector.detect(image, True, draw_boxes=True)
+    results = detector.detect(image)
     assert isinstance(results, list)
     if expected_class is not None:
         assert 'class_name' in results[0]

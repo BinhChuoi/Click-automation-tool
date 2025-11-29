@@ -1,52 +1,70 @@
-import unittest
-from unittest.mock import MagicMock
-from common.impl.contextAction.KeyboardManager import KeyboardManager
+
+
+import pytest
+from unittest.mock import patch, MagicMock
 from common.impl.contextAction.KeyboardContext import KeyboardContext
 
-class TestKeyboardContext(unittest.TestCase):
-    def setUp(self):
-        # Mock KeyboardManager
-        self.mock_manager = MagicMock(spec=KeyboardManager)
-        # Define dummy actions
-        self.action_map = {
-            "start": MagicMock(name="start_action"),
-            "stop": MagicMock(name="stop_action"),
+
+test_settings = {
+    'keyboard_mappings': {
+        'main': {
+            'start': 'ctrl+1',
+            'stop': 'ctrl+2',
+        },
+        'edit': {
+            'save': 'ctrl+s',
         }
-        # Provide a test config mapping directly
-        self.contexts = {
-            "main": {"start": "ctrl+1", "stop": "ctrl+2"},
-        }
-        # Patch KeyboardContext to skip YAML loading
-        self.kc = KeyboardContext(self.mock_manager, self.action_map)
-        self.kc.contexts = self.contexts.copy()
+    }
+}
 
-    def test_set_context_binds_hotkeys(self):
-        self.kc.set_context("main")
-        self.mock_manager.add_hotkey.assert_any_call("ctrl+1", self.action_map["start"])
-        self.mock_manager.add_hotkey.assert_any_call("ctrl+2", self.action_map["stop"])
-        self.assertEqual(self.kc.get_context(), "main")
 
-    def test_unhook_context_removes_hotkeys(self):
-        self.kc.set_context("main")
-        self.kc.unhook_context("main")
-        self.mock_manager.remove_hotkey.assert_any_call("ctrl+1")
-        self.mock_manager.remove_hotkey.assert_any_call("ctrl+2")
+def test_activate_context_binds_hotkeys():
+    with patch('common.impl.contextAction.KeyboardContext.load_settings', return_value=test_settings):
+        with patch('common.impl.contextAction.KeyboardManager.KeyboardManager.clear_all_hotkeys') as clear_mock, \
+             patch('common.impl.contextAction.KeyboardManager.KeyboardManager.add_hotkey') as add_hotkey_mock:
+            kc = KeyboardContext()
+            handler_map = {
+                'start': (MagicMock(name='start_handler'), ()),
+                'stop': (MagicMock(name='stop_handler'), ())
+            }
+            kc.activate_context('main', handler_map)
+            clear_mock.assert_called_once()
+            add_hotkey_mock.assert_any_call('ctrl+1', handler_map['start'][0], ())
+            add_hotkey_mock.assert_any_call('ctrl+2', handler_map['stop'][0], ())
+            assert kc.current_context == 'main'
 
-    def test_trigger_action(self):
-        self.kc.register_action("main", "start", self.action_map["start"])
-        self.kc.trigger_action("main", "start")
-        self.action_map["start"].assert_called_once()
+def test_activate_context_raises_on_missing_context():
+    with patch('common.impl.contextAction.KeyboardContext.load_settings', return_value=test_settings):
+        kc = KeyboardContext()
+        with pytest.raises(ValueError, match="Context 'unknown' not found"):
+            kc.activate_context('unknown', {})
 
-    def test_register_and_unregister_action(self):
-        self.kc.register_action("main", "new_action", self.action_map["start"])
-        self.assertIn("new_action", self.kc.contexts["main"])
-        self.kc.unregister_action("main", "new_action")
-        self.assertNotIn("new_action", self.kc.contexts["main"])
+def test_activate_context_with_handler_args():
+    with patch('common.impl.contextAction.KeyboardContext.load_settings', return_value=test_settings):
+        with patch('common.impl.contextAction.KeyboardManager.KeyboardManager.add_hotkey') as add_hotkey_mock:
+            kc = KeyboardContext()
+            handler_map = {
+                'start': (MagicMock(name='start_handler'), (1, 2)),
+                'stop': (MagicMock(name='stop_handler'), ('foo',))
+            }
+            kc.activate_context('main', handler_map)
+            add_hotkey_mock.assert_any_call('ctrl+1', handler_map['start'][0], (1, 2))
+            add_hotkey_mock.assert_any_call('ctrl+2', handler_map['stop'][0], ('foo',))
 
-    def test_add_context(self):
-        self.kc.add_context("edit", {"save": "ctrl+s"})
-        self.assertIn("edit", self.kc.get_contexts())
-        self.assertEqual(self.kc.contexts["edit"], {"save": "ctrl+s"})
-
-if __name__ == "__main__":
-    unittest.main()
+def test_context_switching_clears_and_rebinds_hotkeys():
+    with patch('common.impl.contextAction.KeyboardContext.load_settings', return_value=test_settings):
+        with patch('common.impl.contextAction.KeyboardManager.KeyboardManager.clear_all_hotkeys') as clear_mock, \
+             patch('common.impl.contextAction.KeyboardManager.KeyboardManager.add_hotkey') as add_hotkey_mock:
+            kc = KeyboardContext()
+            handler_map_main = {
+                'start': (MagicMock(name='start_handler'), ())
+            }
+            handler_map_edit = {
+                'save': (MagicMock(name='save_handler'), ())
+            }
+            kc.activate_context('main', handler_map_main)
+            kc.activate_context('edit', handler_map_edit)
+            assert kc.current_context == 'edit'
+            assert clear_mock.call_count == 2
+            add_hotkey_mock.assert_any_call('ctrl+1', handler_map_main['start'][0], ())
+            add_hotkey_mock.assert_any_call('ctrl+s', handler_map_edit['save'][0], ())
