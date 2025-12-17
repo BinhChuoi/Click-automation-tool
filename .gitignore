@@ -1,6 +1,48 @@
-/.pytest_cache
-/.venv
-/.vscode
-/chromeProfiles
-/upscaled_image_preview.png
-/__pycache__
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+venv/
+ENV/
+
+# Logs
+*.log
+
+# Data & temp
+storageData/
+*.sqlite3
+*.db
+*.db-journal
+*.bak
+*.tmp
+*.swp
+
+# Chrome profiles and screenshots
+chromeProfiles/
+screenshots/
+temp/
+
+# Test outputs
+*.coverage
+htmlcov/
+
+# Presentation
+presentation/__pycache__/
+
+# Misc
+*.orig
+*.rej

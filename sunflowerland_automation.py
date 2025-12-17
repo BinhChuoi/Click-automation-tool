@@ -2,8 +2,8 @@ import sys
 import os
 import pyautogui
 pyautogui.FAILSAFE = False  # Disable PyAutoGUI fail-safe (use with caution)
-from common.impl.tool.ToolManager import ToolManager
-from common.impl.contextAction.KeyboardContext import KeyboardContext
+from core.impl.tool.ToolManager import ToolManager
+from presentation.contextAction.KeyboardContext import KeyboardContext
 
 def display_menu():
     """Prints the main menu and status."""

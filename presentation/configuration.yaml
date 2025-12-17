@@ -1,0 +1,50 @@
+keyboard_mappings:
+  main:
+    create_simple_clicker: "1"
+    quit : "q"
+
+  select_tool_type:
+    simple_clicker: "1"
+    review_tools: "2"
+    cancel: "c"
+
+  tool_editor:
+    prompt_tool_mode: "1"
+    prompt_tool_scenario: "2"
+    save: "3"
+    cancel: "4"
+    delete_tool: "5"
+
+  prompt_editor:
+    save: "s"
+    cancel: "c" # Cancel without saving and return to tool editor
+
+  tool_review:
+    start_tool : "1"
+
+
+ui_settings:
+  theme: "dark"
+  language: "en"
+
+tool_options:
+  auto_save: true
+  max_retries: 5
+
+yolo:
+  model_id: ${YOLO_MODEL_ID}
+  api_key: ${YOLO_API_KEY}
+  confidence_threshold: 0.6
+  max_predictions: 3
+
+template:
+  template_paths: []
+  threshold: 0.95
+
+text:
+  language: "en"
+  gpu: false
+  confidence_threshold: 0.7
+  upscale_factor: 5
+  nl_means: true
+  nl_h: 15
