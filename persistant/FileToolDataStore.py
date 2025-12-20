@@ -3,8 +3,15 @@ import json
 from .AbstractToolDataStore import AbstractToolDataStore
 
 class FileToolDataStore(AbstractToolDataStore):
-    def __init__(self, storage_path):
-        self.storage_path = storage_path
+    def __init__(self, storage_path=None):
+        if storage_path is None:
+            # Use the persistant/data folder as default
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            self.storage_path = os.path.join(base_dir, 'data')
+        else:
+            self.storage_path = storage_path
+        # Ensure the storage directory exists
+        os.makedirs(self.storage_path, exist_ok=True)
 
     def get_tool_filepath(self, tool_id):
         return os.path.join(self.storage_path, f"{tool_id}.json")
@@ -38,3 +45,18 @@ class FileToolDataStore(AbstractToolDataStore):
             except OSError as e:
                 print(f"Error deleting tool data file for '{tool_id}': {e}")
         return False
+
+    def get_all_tool_data(self):
+        """Returns a dict of all tool data loaded from storage."""
+        all_data = {}
+        if not os.path.exists(self.storage_path):
+            return all_data
+        for filename in os.listdir(self.storage_path):
+            if filename.endswith('.json'):
+                tool_id = filename[:-5]
+                try:
+                    with open(os.path.join(self.storage_path, filename), 'r') as f:
+                        all_data[tool_id] = json.load(f)
+                except (json.JSONDecodeError, IOError):
+                    pass
+        return all_data

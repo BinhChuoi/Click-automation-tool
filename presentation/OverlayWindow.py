@@ -5,7 +5,7 @@ This module provides a persistent, transparent overlay window.
 
 from tkinter import Toplevel, Canvas, Button, BOTH, FLAT, NW, NE
 from typing import Callable
-from utils.Constants import OVERLAY_TRANSPARENT_COLOR
+from shared.utils.Constants import OVERLAY_TRANSPARENT_COLOR
 
 class OverlayWindow:
         # Draw a red border to match the selection tool

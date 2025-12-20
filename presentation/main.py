@@ -3,8 +3,10 @@
 Entry point for the presentation component.
 """
 
+
 def main():
-    print("Presentation component started.")
+    from presentation.PresentationManager import PresentationManager
+    PresentationManager()
 
 if __name__ == "__main__":
     main()

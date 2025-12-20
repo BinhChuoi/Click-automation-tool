@@ -1,5 +1,4 @@
-
-from core.main import build_core_component
+from core.main.main import build_core_component
 from presentation.OverlayWindow import OverlayWindow  # Add this import, adjust path if needed
 from shared.utils.Signals import TaskStarted  # Make sure to adjust the import path to where TaskStarted is defined
 import queue
@@ -9,7 +8,15 @@ import itertools
 import threading
 import heapq
 
+from presentation.ToolMaker import ToolMakerUI
+from persistant.FileToolDataStore import FileToolDataStore
+
+from presentation.ToolMaker import default_mode_task_config, default_detection_branches
+
 class PresentationManager:
+    # Provide default configs for ToolMakerUI dialogs
+    default_mode_task_config = default_mode_task_config
+    default_detection_branches = default_detection_branches
     _instance = None
     def run_event_loop(self):
         """Runs the main responsive loop for ToolManager tasks."""
@@ -57,11 +64,43 @@ class PresentationManager:
         self.idle_timeout = 450  # Default idle timeout in seconds
         self.quit_event = threading.Event()
 
-        # Start the core component in a new thread
+
+        # Core component thread reference
+        self.core_thread = None
+        self.core_component = None
+
+        # Handle window close to shutdown all threads
+        self.tk_root.protocol("WM_DELETE_WINDOW", self.on_close)
+        # Start ToolMaker UI integrated with PresentationManager's event loop
+        self.tool_data_store = FileToolDataStore()  # Uses default persistant/data
+        self.toolmaker_app = ToolMakerUI(master=self.tk_root, manager=self, datastore=self.tool_data_store)
+        self.run_event_loop()
+
+    def start_core_component(self, callback=None):
+        if self.core_thread and self.core_thread.is_alive():
+            if callback:
+                self.tk_root.after(100, callback)
+            return
         def start_core():
-            core_component = build_core_component()
-            core_component.start()
-        threading.Thread(target=start_core, daemon=True).start()
+            self.core_component = build_core_component()
+            self.core_component.start()
+            if callback:
+                self.tk_root.after(0, callback)
+        self.core_thread = threading.Thread(target=start_core, daemon=True)
+        self.core_thread.start()
+
+    def stop_core_component(self, callback=None):
+        if self.core_component and hasattr(self.core_component, 'stop'):
+            self.core_component.stop()
+        self.core_component = None
+        if callback:
+            self.tk_root.after(0, callback)
+
+    def on_close(self):
+        print("Shutting down all threads and cleaning up...")
+        self.quit_event.set()
+        # Optionally join threads or perform other cleanup here
+        self.tk_root.destroy()
 
         PresentationManager._instance = self
 
