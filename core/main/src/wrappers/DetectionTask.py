@@ -1,16 +1,18 @@
-from core.impl.detection.ThreadedStrategy import ThreadedStrategy
-from core.impl.detection.NonThreadedStrategy import NonThreadedStrategy
-from core.impl.detection.TemplateDetector import TemplateDetector
-from core.impl.detection.TextDetector import TextDetector
-from core.impl.detection.YoloObjectDetector import YoloObjectDetector
-from utils.Configuration import load_configuration
-from utils.Constants import (
+
+from core.main.src.impl.detection.ThreadedStrategy import ThreadedStrategy
+from core.main.src.impl.detection.NonThreadedStrategy import NonThreadedStrategy
+from core.main.src.impl.detection.TemplateDetector import TemplateDetector
+from core.main.src.impl.detection.TextDetector import TextDetector
+from core.main.src.impl.detection.YoloObjectDetector import YoloObjectDetector
+from shared.utils.Configuration import load_configuration
+from core.main.src.utils.Constants import (
     DETECTOR_TYPE_TEMPLATE, DETECTOR_TYPE_TEXT, DETECTOR_TYPE_YOLO,
     EXECUTION_STRATEGY_THREADED, EXECUTION_STRATEGY_NON_THREADED
 )
+from core.main.src.base.wrappers.AbstractDetectionTask import AbstractDetectionTask
 
  # Configuration is now loaded and merged in ToolManager
-DEFAULT_CONFIG = load_configuration()
+DEFAULT_CONFIG = load_configuration("core.main.resources")
 
 # --- Detection Class Mapping ---
 DETECTOR_CLASSES = {
@@ -25,7 +27,7 @@ EXECUTION_CLASSES = {
 }
 
 
-class DetectionTask:
+class DetectionTask(AbstractDetectionTask):
     """
     Adapter that wraps a detection strategy (e.g., template matching, text)
     and its execution model (threaded or non-threaded).

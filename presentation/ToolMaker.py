@@ -1,3 +1,4 @@
+
 # Keep these for later use
 default_mode_task_config = {
     "main": [
@@ -6,7 +7,7 @@ default_mode_task_config = {
             "execution_type": "non_threaded",
             "area": {"x": 0, "y": 0, "width": 1920, "height": 1080},
             "detectors": [
-                {"detector_type": "template", "config": {"template_paths": [], "threshold": 0.8}}
+                {"detector_type": "template", "config": {}}
             ]
         },
         {
@@ -32,65 +33,73 @@ default_mode_task_config = {
 
 default_detection_branches = {
     "scenarios": [
+        # {
+        #     "id": "planting",
+        #     "condition": "all([k in detected_objects['default'] for k in ['base_template.png', 'hole.png']])",
+        #     "actions": [
+        #         {"type": "click", "templates": ["hole.png"], "max_items": 10, "click_count": 1}
+        #     ]
+        # },
+        # {
+        #     "id": "havert_crops",
+        #     "condition": "('base_template.png' in detected_objects['default']) and any([k in detected_objects['default'] for k in ['sunflower_crop_v2.png', 'rhubard_crop.png']])",
+        #     "actions": [
+        #         {"type": "click", "templates": ["sunflower_crop_v2.png", "rhubard_crop.png"], "max_items": 10, "click_count": 1}
+        #     ]
+        # },
+        # {
+        #     "id": "close_basket_tool",
+        #     "condition": "all([k in detected_objects['default'] for k in ['basket_window.png', 'close_button.png']])",
+        #     "actions": [
+        #         {"type": "click", "templates": ["close_button.png"], "max_items": 1}
+        #     ]
+        # },
+        # {
+        #     "id": "select_seed_in_basket_tool",
+        #     "condition": "all([k in detected_objects['default'] for k in ['basket_window.png', 'rhubard_seed.png']])",
+        #     "actions": [
+        #         {"type": "click", "templates": ["rhubard_seed.png"], "max_items": 2}
+        #     ],
+        #     "childrens": ["close_basket_tool"]
+        # },
+        # {
+        #     "id": "detect_seed_tool_not_suitable",
+        #     "condition": "all([k in detected_objects['default'] for k in ['base_template.png', 'basket_v2.png']]) and not ('rhubard_seed_tool.png' in detected_objects['default'])",
+        #     "actions": [
+        #         {"type": "click", "templates": ["basket_v2.png"], "max_items": 1}
+        #     ],
+        #     "childrens": ["select_seed_in_basket_tool"]
+        # },
+        # {
+        #     "id": "close_captcha",
+        #     "condition": "'close_text.png' in detected_objects['default']",
+        #     "actions": [
+        #         {"type": "click", "templates": ["close_text.png"], "max_items": 1}
+        #     ]
+        # },
+        # {
+        #     "id": "handle_captcha",
+        #     "condition": "any([(k in detected_objects['captcha_passer']) for k in ['goblin', 'chest', 'skeleton']])",
+        #     "mode": "captcha_passer",
+        #     "actions": [
+        #         {"type": "click", "templates": ["goblin", "chest", "skeleton"], "max_items": 3},
+        #         {"type": "change_mode", "mode": "main"}
+        #     ],
+        #     "childrens": ["close_captcha"]
+        # },
+        # {
+        #     "id": "detect_captcha",
+        #     "condition": "any([(k in detected_objects['default']) for k in ['attempt_left_blue.png', 'tap_chest.png', 'attempt_left_red.png']])",
+        #     "actions": [{"type": "change_mode", "mode": "captcha_passer"}],
+        #     "childrens": ["handle_captcha"]
+        # }
+
         {
-            "id": "planting",
-            "condition": "all([k in detected_objects['default'] for k in ['base_template.png', 'hole.png']])",
-            "actions": [
-                {"type": "click", "templates": ["hole.png"], "max_items": 10, "click_count": 1}
-            ]
-        },
-        {
-            "id": "havert_crops",
-            "condition": "('base_template.png' in detected_objects['default']) and any([k in detected_objects['default'] for k in ['sunflower_crop_v2.png', 'rhubard_crop.png']])",
-            "actions": [
-                {"type": "click", "templates": ["sunflower_crop_v2.png", "rhubard_crop.png"], "max_items": 10, "click_count": 1}
-            ]
-        },
-        {
-            "id": "close_basket_tool",
-            "condition": "all([k in detected_objects['default'] for k in ['basket_window.png', 'close_button.png']])",
-            "actions": [
-                {"type": "click", "templates": ["close_button.png"], "max_items": 1}
-            ]
-        },
-        {
-            "id": "select_seed_in_basket_tool",
-            "condition": "all([k in detected_objects['default'] for k in ['basket_window.png', 'rhubard_seed.png']])",
-            "actions": [
-                {"type": "click", "templates": ["rhubard_seed.png"], "max_items": 2}
+            "id": "test",
+            "condition": "'mush_room.png' in detected_objects['default']",
+             "actions": [
+                {"type": "click", "templates": ["mush_room.png"], "max_items": 3},
             ],
-            "childrens": ["close_basket_tool"]
-        },
-        {
-            "id": "detect_seed_tool_not_suitable",
-            "condition": "all([k in detected_objects['default'] for k in ['base_template.png', 'basket_v2.png']]) and not ('rhubard_seed_tool.png' in detected_objects['default'])",
-            "actions": [
-                {"type": "click", "templates": ["basket_v2.png"], "max_items": 1}
-            ],
-            "childrens": ["select_seed_in_basket_tool"]
-        },
-        {
-            "id": "close_captcha",
-            "condition": "'close_text.png' in detected_objects['default']",
-            "actions": [
-                {"type": "click", "templates": ["close_text.png"], "max_items": 1}
-            ]
-        },
-        {
-            "id": "handle_captcha",
-            "condition": "any([(k in detected_objects['captcha_passer']) for k in ['goblin', 'chest', 'skeleton']])",
-            "mode": "captcha_passer",
-            "actions": [
-                {"type": "click", "templates": ["goblin", "chest", "skeleton"], "max_items": 3},
-                {"type": "change_mode", "mode": "main"}
-            ],
-            "childrens": ["close_captcha"]
-        },
-        {
-            "id": "detect_captcha",
-            "condition": "any([(k in detected_objects['default']) for k in ['attempt_left_blue.png', 'tap_chest.png', 'attempt_left_red.png']])",
-            "actions": [{"type": "change_mode", "mode": "captcha_passer"}],
-            "childrens": ["handle_captcha"]
         }
     ]
 }
@@ -125,8 +134,33 @@ class ToolMakerUI(tk.Frame):
             for tool_id, data in all_tools.items():
                 item_id = self.tool_list.insert("", "end", values=(data.get("name", tool_id), data.get("type", "")))
                 self.tool_data_map[item_id] = data
+                self._add_start_tool_button(item_id, tool_id, data.get("type", ""))
         except Exception as e:
             print(f"Failed to load tools: {e}")
+
+    def _add_start_tool_button(self, item_id, tool_id, tool_type):
+        """Adds a 'Start Tool' button to the UI for a tool item."""
+        import tkinter as tk
+        from shared.utils.Constants import START_TOOL_EVENT
+        from shared.mediator.impl.Mediator import BlinkerMediator
+        btn_frame = tk.Frame(self)
+        btn_frame.pack(fill=tk.X, padx=10, pady=2)
+        def on_start():
+            mediator = BlinkerMediator.get_instance()
+            # Build tool_configuration from tool_data
+            tool_data = self.tool_data_map.get(item_id, {})
+            tool_configuration = {
+                "tool_id": tool_id,
+                "modes": tool_data.get("modes", {}),
+                "detection_branches": tool_data.get("detection_branches", {})
+            }
+            mediator.publish(START_TOOL_EVENT, data={
+                "tool_id": tool_id,
+                "tool_type": tool_type,
+                "tool_configuration": tool_configuration
+            })
+        btn = tk.Button(btn_frame, text=f"Start '{tool_id}'", command=on_start)
+        btn.pack(side=tk.RIGHT)
 
     def _init_ui(self):
         """Initialize all UI components."""

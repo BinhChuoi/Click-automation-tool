@@ -5,17 +5,13 @@ class BaseTool:
     """Base class for all tools, providing common functionality."""
     TOOL_NAME = "BaseTool"
 
-    def __init__(self, tool_data=None, tool_configuration=None):
-        if tool_data:
-            self.tool_id = tool_data.get('tool_id', f"{self.TOOL_NAME}_{int(time.time()*1000)}")
-            self.version = tool_data.get('version', '1.0')
-            self.last_used = tool_data.get('last_used', time.time())
-            self.tool_configuration = tool_data.get('tool_configuration', self.get_default_configuration())
-        else:
-            self.tool_id = f"{self.TOOL_NAME}_{int(time.time()*1000)}"
-            self.version = '1.0'
-            self.last_used = time.time()
-            self.tool_configuration = tool_configuration or self.get_default_configuration()
+    def __init__(self, tool_configuration=None):
+        # Priority: tool_id in tool_data > tool_id in tool_configuration > generate new
+        config = tool_configuration or {}
+        self.tool_id = config.get('tool_id') or f"{self.TOOL_NAME}_{int(time.time()*1000)}"
+        self.version = '1.0'
+        self.last_used = time.time()
+        self.tool_configuration = config or self.get_default_configuration()
         self.mode_tasks = {"main": {}}
         self.mode = "main"
         self.heartbeat_id = None
@@ -94,15 +90,16 @@ class BaseTool:
         if area is None:
             raise ValueError("Area must be provided when creating a new task.")
         print(f"Creating new task '{task_id}' using provided area boundaries.")
-        # Dynamically import DetectionTask to avoid circular import
-        from core.main.src.wrappers.DetectionTask import DetectionTask
+        # Use DetectionTaskFactory to create detection tasks
+        from core.main.src.base.wrappers.DetectionTaskFactory import DetectionTaskFactory
+        from core.main.src.base.wrappers.AbstractDetectionTask import AbstractDetectionTask
         task_config = {
             'execution_type': execution_type,
             'area': area,
             'detectors': detectors,
             'sleep_period': sleep_period
         }
-        task = DetectionTask(task_id, task_config, on_detection=on_detection, on_stop=on_stop)
+        task: AbstractDetectionTask = DetectionTaskFactory.create('default', task_id, task_config, on_detection=on_detection, on_stop=on_stop)
         task.start()
         print(f"Task '{task_id}' started. Press 'p' to pause/resume, 'r' to reset, 'esc' to stop.")
         return task

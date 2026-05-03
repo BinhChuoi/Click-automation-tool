@@ -1,3 +1,12 @@
+# Event for tool heartbeat
+TOOL_HEARTBEAT_EVENT = 'tool_heartbeat'
+# Event names for Mediator pattern (additional for SimpleClickerTool)
+INTERACTION_EVENT = 'interaction'
+TASK_STARTED_EVENT = 'task_started'
+# Event names for Mediator pattern
+CREATE_TOOL_EVENT = 'create_tool'
+START_TOOL_EVENT = 'start_tool'
+DESTROY_TOOL_EVENT = 'destroy_tool'
 # Constants for Sunflowerland-automation
 
 # File and directory names

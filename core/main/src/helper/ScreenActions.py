@@ -8,7 +8,7 @@ from ..impl.tool import ToolManager
 # Add a tie-breaker counter
 tie_breaker = count()
 
-def move_mouse(tool_id, heartbeat_id, x, y, priority=1, duration=0):
+def move_mouse(x, y, priority=1, duration=0):
     """
     Queues a mouse movement action to the main application's queue.
 
@@ -21,22 +21,19 @@ def move_mouse(tool_id, heartbeat_id, x, y, priority=1, duration=0):
         duration (float): The duration of the mouse movement.
     """
     delay = random.uniform(0.1, 0.5)
-    ToolManager.add_task_to_queue(priority, {
+    from presentation.PresentationManager import PresentationManager
+    PresentationManager.get_instance().add_task_to_queue(priority, {
         'type': 'execute',
         'call_back': time.sleep,
         'args': (delay,),
-        'tool_id': tool_id,
-        'heartbeat_id': heartbeat_id
     })
-    ToolManager.add_task_to_queue(priority, {
+    PresentationManager.get_instance().add_task_to_queue(priority, {
         'type': 'execute',
         'call_back': pyautogui.moveTo,
         'args': (x, y, duration),
-        'tool_id': tool_id,
-        'heartbeat_id': heartbeat_id
     })
 
-def click(tool_id, heartbeat_id,  priority=1, button='left'):
+def click(priority=1, button='left'):
     """
     Queues a mouse click action to the main application's queue.
 
@@ -47,22 +44,19 @@ def click(tool_id, heartbeat_id,  priority=1, button='left'):
         button (str): The mouse button to click ('left', 'right', 'middle').
     """
     delay = random.uniform(0.1, 0.3)
-    ToolManager.add_task_to_queue(priority, {
+    from presentation.PresentationManager import PresentationManager
+    PresentationManager.get_instance().add_task_to_queue(priority, {
         'type': 'execute',
         'call_back': time.sleep,
         'args': (delay,),
-        'tool_id': tool_id,
-        'heartbeat_id': heartbeat_id
     })
-    ToolManager.add_task_to_queue(priority, {
+    PresentationManager.get_instance().add_task_to_queue(priority, {
         'type': 'execute',
         'call_back': pyautogui.click,
         'kwargs': {'button': button},
-        'tool_id': tool_id,
-        'heartbeat_id': heartbeat_id
     })
 
-def double_click(tool_id, heartbeat_id,  priority=1, button='left'):
+def double_click(priority=1, button='left'):
     """
     Queues a double click action to the main application's queue.
 
@@ -73,27 +67,23 @@ def double_click(tool_id, heartbeat_id,  priority=1, button='left'):
         button (str): The mouse button to click ('left', 'right', 'middle').
     """
     delay = random.uniform(0.1, 0.3)
-    ToolManager.add_task_to_queue(priority, {
+    from presentation.PresentationManager import PresentationManager
+    PresentationManager.get_instance().add_task_to_queue(priority, {
         'type': 'execute',
         'call_back': time.sleep,
         'args': (delay,),
-        'tool_id': tool_id,
-        'heartbeat_id': heartbeat_id
     })
-    ToolManager.add_task_to_queue(priority, {
+    PresentationManager.get_instance().add_task_to_queue(priority, {
         'type': 'execute',
         'call_back': pyautogui.doubleClick,
-        'kwargs': {'button': button},
-        'tool_id': tool_id,
-        'heartbeat_id': heartbeat_id
+        'kwargs': {'button': button}
     })
 
-def queue_sleep(tool_id, heartbeat_id, duration, priority=1):
+def queue_sleep(duration, priority=1):
     """Queues a sleep action."""
-    ToolManager.add_task_to_queue(priority, {
+    from presentation.PresentationManager import PresentationManager
+    PresentationManager.get_instance().add_task_to_queue(priority, {
         'type': 'execute',
         'call_back': time.sleep,
-        'args': (duration,),
-        'tool_id': tool_id,
-        'heartbeat_id': heartbeat_id
+        'args': (duration,)
     })

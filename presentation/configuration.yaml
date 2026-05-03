@@ -38,8 +38,8 @@ yolo:
   max_predictions: 3
 
 template:
-  template_paths: []
-  threshold: 0.95
+  template_names: []
+  threshold: 0.8
 
 text:
   language: "en"

@@ -1,0 +1,9 @@
+[tool.poetry]
+name = "sunflowerland-automation"
+version = "0.1.0"
+description = "Automation tools."
+authors = ["Your Name <your.email@example.com>"]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"

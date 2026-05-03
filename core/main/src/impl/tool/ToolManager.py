@@ -3,17 +3,18 @@ import os
 import time
 import queue
 import threading
+from typing import Dict
 from concurrent.futures import ThreadPoolExecutor
-from shared.utils.Signals import CreateTool, StartTool, DestroyTool
+from core.main.src.base.tool.BaseTool import BaseTool
+from shared.utils.Constants import CREATE_TOOL_EVENT, START_TOOL_EVENT, DESTROY_TOOL_EVENT
 
 class _ToolManager:
     # region Initialization and Core Lifecycle
     def __init__(self):
         """Initializes the ToolManager, setting up paths and default states."""
-        self.active_tools = {}
-        self.last_event_time = None
+        self.active_tools: Dict[str, BaseTool] = {}
+        self.last_event_time: float = None
         self.event_queue = queue.Queue()
-        self._event_worker_thread = None
         self._stop_event_worker = threading.Event()
 
 
@@ -23,22 +24,34 @@ class _ToolManager:
         self.last_event_time = None
 
     def start(self):
-        # Connect signals to enqueue events instead of direct processing
-        CreateTool.connect(self._on_create_tool_signal)
-        StartTool.connect(self._on_start_tool_signal)
-        DestroyTool.connect(self._on_destroy_tool_signal)
+        # Initialize inference library (triggers version/model checks and warnings)
+        try:
+            import inference
+        except ImportError:
+            print("WARNING: 'inference' package is not installed. Some features may not work.")
+
+        # Use Mediator pattern for event handling
+        from shared.mediator.impl.Mediator import BlinkerMediator
+        mediator = BlinkerMediator.get_instance()
+        from shared.utils.Constants import CREATE_TOOL_EVENT, START_TOOL_EVENT, DESTROY_TOOL_EVENT
+        mediator.subscribe(CREATE_TOOL_EVENT, self._on_create_tool_event)
+        mediator.subscribe(START_TOOL_EVENT, self._on_start_tool_event)
+        mediator.subscribe(DESTROY_TOOL_EVENT, self._on_destroy_tool_event)
 
         # Run event worker on the current thread (blocking)
         self._event_worker()
 
-    def _on_create_tool_signal(self, sender, data):
-        self.enqueue_event('create', sender, data)
+    def _on_create_tool_event(self, sender, **kwargs):
+        from shared.utils.Constants import CREATE_TOOL_EVENT
+        self.enqueue_event(CREATE_TOOL_EVENT, sender, kwargs)
 
-    def _on_start_tool_signal(self, sender, data):
-        self.enqueue_event('start', sender, data)
+    def _on_start_tool_event(self, sender, **kwargs):
+        from shared.utils.Constants import START_TOOL_EVENT
+        self.enqueue_event(START_TOOL_EVENT, sender, kwargs)
 
-    def _on_destroy_tool_signal(self, sender, data):
-        self.enqueue_event('destroy', sender, data)
+    def _on_destroy_tool_event(self, sender, **kwargs):
+        from shared.utils.Constants import DESTROY_TOOL_EVENT
+        self.enqueue_event(DESTROY_TOOL_EVENT, sender, kwargs)
         
     def enqueue_event(self, event_type, sender, data):
         self.event_queue.put((event_type, sender, data))
@@ -49,24 +62,27 @@ class _ToolManager:
                 event_type, sender, data = self.event_queue.get(timeout=0.2)
             except queue.Empty:
                 continue
-            if event_type == 'create':
+            if event_type == CREATE_TOOL_EVENT:
                 self.handle_create_tool(sender, data)
-            elif event_type == 'start':
+            elif event_type == START_TOOL_EVENT:
                 self.handle_start_tool(sender, data)
-            elif event_type == 'destroy':
+            elif event_type == DESTROY_TOOL_EVENT:
                 self.handle_destroy_tool(sender, data)
             self.event_queue.task_done()
 
     def handle_create_tool(self, sender, data):
         self.last_event_time = time.time()
+        # Support Blinker-style event data wrapping
+        event_data = data.get('data', data)
         # Create new tool based on data but don't start it yet
-        tool = self.build(data.get('tool_type'), tool_config=data.get('tool_config', {})) 
+        tool = self.build(event_data.get('tool_type'), tool_config=event_data.get('tool_configuration', {})) 
         self.register_tool_instance(tool.tool_id, tool)
 
     def handle_start_tool(self, sender, data):
         self.last_event_time = time.time()
-        tool_id = data.get('tool_id')
-        tool_type = data.get('tool_type')
+        event_data = data.get('data', data)
+        tool_id = event_data.get('tool_id')
+        tool_type = event_data.get('tool_type')
         if not tool_id or not tool_type:
             print("Error: 'tool_id' or 'tool_type' not provided in start_tool signal.")
             return
@@ -87,7 +103,8 @@ class _ToolManager:
     
     def handle_destroy_tool(self, sender, data):
         self.last_event_time = time.time()
-        tool_id = data.get('tool_id')
+        event_data = data.get('data', data)
+        tool_id = event_data.get('tool_id')
         if not tool_id:
             print("Error: 'tool_id' not provided in destroy_tool signal.")
             return
@@ -110,7 +127,7 @@ class _ToolManager:
     # endregion
 
     # region Tool Building and Lifecycle
-    def build(self, tool_type, tool_data=None, tool_config=None):
+    def build(self, tool_type: str, tool_config=None):
         """
         Builds a tool instance from saved data or a new configuration. Handles area selection and overlay binding to the tool.
         """
@@ -118,17 +135,15 @@ class _ToolManager:
         if tool_type == 'simple_clicker':
             from core.main.src.impl.tool.SimpleClickerTool import SimpleClicker
             tool_class = SimpleClicker
+        from core.main.src.impl.processor.DefaultActionExecuter import DefaultActionExecuter
         
         if not tool_class:
             print(f"Error: Unknown tool type '{tool_type}'")
             return None
 
-        if tool_config:
-            final_config = tool_class.get_default_configuration()
-            final_config.update(tool_config)
-            return tool_class(tool_configuration=final_config)
-        else:
-            return tool_class(tool_data=tool_data)
+        final_config = tool_class.get_default_configuration()
+        final_config.update(tool_config)
+        return tool_class(tool_configuration=final_config, executor_class=DefaultActionExecuter)
     # endregion
 
     # region Tool Instance Management

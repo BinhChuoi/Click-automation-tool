@@ -1,0 +1,78 @@
+{
+    "name": "test",
+    "type": "simple_clicker",
+    "modes": {
+        "main": [
+            {
+                "id": "main",
+                "execution_type": "non_threaded",
+                "area": {
+                    "x": 0,
+                    "y": 0,
+                    "width": 1920,
+                    "height": 1080
+                },
+                "detectors": [
+                    {
+                        "detector_type": "template",
+                        "config": {}
+                    }
+                ]
+            },
+            {
+                "id": "tool_text",
+                "execution_type": "non_threaded",
+                "area": {
+                    "x": 1800,
+                    "y": 365,
+                    "width": 120,
+                    "height": 120
+                },
+                "detectors": [
+                    {
+                        "detector_type": "text",
+                        "config": {}
+                    }
+                ]
+            }
+        ],
+        "captcha_passer": [
+            {
+                "id": "captcha_passer",
+                "execution_type": "non_threaded",
+                "area": {
+                    "x": 0,
+                    "y": 0,
+                    "width": 1920,
+                    "height": 1080
+                },
+                "detectors": [
+                    {
+                        "detector_type": "yolo",
+                        "config": {
+                            "model_id": "sunflower-captcha-detection-idxoo/12",
+                            "api_key": "ds4cacROzFGinfEsMrm0"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "detection_branches": {
+        "scenarios": [
+            {
+                "id": "test",
+                "condition": "'mush_room.png' in input_data['main']",
+                "actions": [
+                    {
+                        "type": "click",
+                        "templates": [
+                            "mush_room.png" 
+                        ],
+                        "max_items": 3
+                    }
+                ]
+            }
+        ]
+    }
+}
