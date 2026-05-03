@@ -42,5 +42,21 @@ cd <project-root>
 python -m presentation.main
 ```
 
+## Tool Maker Usage
+
+Create and start a tool from the UI:
+
+1. Fill Tool Name.
+2. Choose Tool Type.
+3. Click Save Tool.
+4. Click Start Core.
+5. Select the saved tool in the list.
+6. Configure it with Edit Modes and Edit Detection Branches.
+7. Click Start '<tool-name>' to run.
+
+Where data is saved:
+
+- Tool definitions are stored in [persistant/data](../persistant/data).
+
 ## Version
 See `__init__.py` for the current version.

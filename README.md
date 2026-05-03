@@ -1,7 +1,14 @@
-# Sunflowerland Automation
+# Click Automation Tool
 
-Sunflowerland Automation is a desktop automation toolkit for repetitive in-game actions.
+Click Automation Tool is a desktop automation toolkit for repetitive on-screen actions.
 It combines on-screen detection with configurable action workflows so tools can react to what is visible on screen.
+
+## Problem This Solves
+
+Many auto-click tools only click predefined points or pixel positions.
+That approach is fragile when UI elements move, styles change, or the target must be recognized as an object instead of a fixed coordinate.
+
+This tool addresses that gap by detecting objects/text on screen first, then deciding where and when to act based on scenario logic.
 
 ## What This Project Does
 
@@ -13,6 +20,24 @@ It combines on-screen detection with configurable action workflows so tools can 
 - Provides a Tkinter-based Tool Maker UI to create, save, start, and manage tools.
 - Uses an event-driven mediator to coordinate the presentation layer and core processing.
 - Stores tool configurations in persistent JSON data for reuse.
+
+## Demo
+
+For portfolio/CV presentation, GIF is the most reliable inline format in README files.
+
+Inline GIF example:
+
+![Automation Demo](docs/media/demo_autoclick.mp4)
+
+If your source is MP4/WebM, keep the video as a file and add a clickable preview:
+
+[![Watch Demo Video](docs/media/ui.png)](docs/media/demo_autoclick.mp4)
+
+Notes:
+
+- GIF displays directly in GitHub README.
+- MP4 is usually better quality and smaller size, but is best shared as a link from README.
+- A common setup is: short GIF for quick preview + full MP4 for detailed walkthrough.
 
 ## Project Idea
 
@@ -179,8 +204,29 @@ Run from the project root so package imports resolve correctly.
 2. .\.venv\Scripts\Activate.ps1
 3. python -m presentation.main
 
+## Tool Maker UI Quick Start
+
+Use this flow to create, save, and start a tool from the UI.
+
+1. Launch the app with python -m presentation.main.
+2. In the top bar, enter Tool Name.
+3. Select Tool Type (for example simple_clicker).
+4. Click Save Tool.
+5. Click Start Core if core is not running yet.
+6. In the tool list, click your saved tool row.
+7. Click Edit Modes to configure detection areas/tasks.
+8. Click Edit Detection Branches to define scenarios and actions.
+9. Click the Start '<tool-name>' button at the lower-right area to run that tool.
+
+Behavior notes:
+
+- Selecting a tool row enables editing and start actions for that specific tool.
+- Saved tool definitions are persisted under [persistant/data](persistant/data).
+- You can stop/restart the app and reload previously saved tools from the list.
+
 ## Notes
 
+- First run warning: the Inference client may take noticeably longer on first startup because it may download/load model assets and initialize dependencies.
 - You may see model capability warnings from inference (for optional model families). Those are informational unless your workflow depends on those specific models.
 - If you run from a subfolder, absolute package imports can fail. Always run from the repository root.
 
