@@ -35,7 +35,7 @@ Additional screenshots (click to open demo video):
 
 Detected objects view: shows recognition results from the active detection cycle before decision logic runs.
 
-[![Perform Action](docs/media/perform_action.png)](docs/media/demo_autoclick.mp4)
+[![Perform Action](docs/media/perform_click_action.png)](docs/media/demo_autoclick.mp4)
 
 Action execution view: shows the automation step where matched scenarios trigger click actions.
 
