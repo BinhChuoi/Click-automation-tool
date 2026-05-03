@@ -61,16 +61,81 @@
     "detection_branches": {
         "scenarios": [
             {
-                "id": "test",
+                "id": "harvest_mush_room",
                 "condition": "'mush_room.png' in input_data['main']",
                 "actions": [
                     {
                         "type": "click",
                         "templates": [
-                            "mush_room.png" 
+                            "mush_room.png"
                         ],
                         "max_items": 3
                     }
+                ]
+            },
+            {
+                "id": "havert_crops",
+                "condition": "('base_template.png' in input_data['main']) and any([k in input_data['main'] for k in ['sunflower_crop.png', 'rhubard_crop.png']])",
+                "actions": [
+                    {
+                        "type": "click",
+                        "templates": [
+                            "sunflower_crop.png",
+                            "rhubard_crop.png"
+                        ],
+                        "max_items": 10,
+                        "click_count": 1
+                    }
+                ]
+            },
+           
+            {
+                "id": "close_captcha",
+                "condition": "'close_text.png' in input_data['main']",
+                "actions": [
+                    {
+                        "type": "click",
+                        "templates": [
+                            "close_text.png"
+                        ],
+                        "max_items": 1
+                    }
+                ]
+            },
+            {
+                "id": "handle_captcha",
+                "condition": "any([(k in input_data['captcha_passer']) for k in ['goblin', 'chest', 'skeleton']])",
+                "mode": "captcha_passer",
+                "actions": [
+                    {
+                        "type": "click",
+                        "templates": [
+                            "goblin",
+                            "chest",
+                            "skeleton"
+                        ],
+                        "max_items": 3
+                    },
+                    {
+                        "type": "change_mode",
+                        "mode": "main"
+                    }
+                ],
+                "childrens": [
+                    "close_captcha"
+                ]
+            },
+            {
+                "id": "detect_captcha",
+                "condition": "any([(k in input_data['main']) for k in ['tap_chest.png', 'attempt_left.png']])",
+                "actions": [
+                    {
+                        "type": "change_mode",
+                        "mode": "captcha_passer"
+                    }
+                ],
+                "childrens": [
+                    "handle_captcha"
                 ]
             }
         ]
