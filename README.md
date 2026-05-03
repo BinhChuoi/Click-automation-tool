@@ -23,21 +23,14 @@ This tool addresses that gap by detecting objects/text on screen first, then dec
 
 ## Demo
 
-For portfolio/CV presentation, GIF is the most reliable inline format in README files.
-
-Inline GIF example:
-
-![Automation Demo](docs/media/demo_autoclick.mp4)
-
-If your source is MP4/WebM, keep the video as a file and add a clickable preview:
+Use a clickable thumbnail that opens the full video:
 
 [![Watch Demo Video](docs/media/ui.png)](docs/media/demo_autoclick.mp4)
 
 Notes:
 
-- GIF displays directly in GitHub README.
-- MP4 is usually better quality and smaller size, but is best shared as a link from README.
-- A common setup is: short GIF for quick preview + full MP4 for detailed walkthrough.
+- This avoids inline preview failures when the video file is too large.
+- Keep the full video in docs/media and use an image thumbnail as the preview.
 
 ## Project Idea
 
