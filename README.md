@@ -27,6 +27,18 @@ Use a clickable thumbnail that opens the full video:
 
 [![Watch Demo Video](docs/media/ui.png)](docs/media/demo_autoclick.mp4)
 
+Tool Maker overview: shows a saved tool selected in the list, ready to start and edit.
+
+Additional screenshots (click to open demo video):
+
+[![Detected Objects](docs/media/detected_objects.png)](docs/media/demo_autoclick.mp4)
+
+Detected objects view: shows recognition results from the active detection cycle before decision logic runs.
+
+[![Perform Action](docs/media/perform_action.png)](docs/media/demo_autoclick.mp4)
+
+Action execution view: shows the automation step where matched scenarios trigger click actions.
+
 Notes:
 
 - This avoids inline preview failures when the video file is too large.
